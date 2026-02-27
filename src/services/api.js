@@ -1,18 +1,32 @@
-import axios from 'axios';
+import axios from "axios";
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+// ==============================================
+// API BASE URL CONFIG
+// ==============================================
+
+const API_URL =
+  import.meta.env.VITE_API_URL ||
+  (import.meta.env.MODE === "development"
+    ? "http://localhost:5001/api"
+    : "https://finsarthi-backend-62th.onrender.com/api");
+
+console.log("🌐 API BASE URL:", API_URL);
 
 const api = axios.create({
   baseURL: API_URL,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
+  withCredentials: true,
 });
 
-// Request interceptor - Add token
+// ==============================================
+// REQUEST INTERCEPTOR (Attach Token)
+// ==============================================
+
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -21,14 +35,24 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Response interceptor - Handle errors
+// ==============================================
+// RESPONSE INTERCEPTOR (Handle Errors Globally)
+// ==============================================
+
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem('token');
-      window.location.href = '/login';
+    if (error.response) {
+      console.error("❌ API Error:", error.response.data);
+
+      if (error.response.status === 401) {
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+      }
+    } else {
+      console.error("❌ Network Error:", error.message);
     }
+
     return Promise.reject(error);
   }
 );
@@ -36,32 +60,35 @@ api.interceptors.response.use(
 // ==============================================
 // AUTH APIs
 // ==============================================
+
 export const authAPI = {
-  register: (data) => api.post('/auth/register', data),
-  login: (data) => api.post('/auth/login', data),
-  getMe: () => api.get('/auth/me'),
-  logout: () => api.post('/auth/logout'),
-  updateProfile: (data) => api.put('/auth/profile', data),
-  updatePassword: (data) => api.put('/auth/update-password', data),
+  register: (data) => api.post("/auth/register", data),
+  login: (data) => api.post("/auth/login", data),
+  getMe: () => api.get("/auth/me"),
+  logout: () => api.post("/auth/logout"),
+  updateProfile: (data) => api.put("/auth/profile", data),
+  updatePassword: (data) => api.put("/auth/update-password", data),
 };
 
 // ==============================================
 // EXPENSE APIs
 // ==============================================
+
 export const expenseAPI = {
-  getAll: (params) => api.get('/expenses', { params }),
-  create: (data) => api.post('/expenses', data),
+  getAll: (params) => api.get("/expenses", { params }),
+  create: (data) => api.post("/expenses", data),
   update: (id, data) => api.put(`/expenses/${id}`, data),
   delete: (id) => api.delete(`/expenses/${id}`),
-  parseNaturalLanguage: (data) => api.post('/expenses/parse', data),
+  parseNaturalLanguage: (data) => api.post("/expenses/parse", data),
 };
 
 // ==============================================
 // BUDGET APIs
 // ==============================================
+
 export const budgetAPI = {
-  getAll: (params) => api.get('/budget', { params }),
-  create: (data) => api.post('/budget', data),
+  getAll: (params) => api.get("/budget", { params }),
+  create: (data) => api.post("/budget", data),
   update: (id, data) => api.put(`/budget/${id}`, data),
   delete: (id) => api.delete(`/budget/${id}`),
 };
@@ -69,63 +96,75 @@ export const budgetAPI = {
 // ==============================================
 // ANALYTICS APIs
 // ==============================================
+
 export const analyticsAPI = {
-  getDashboard: () => api.get('/analytics/dashboard'),
-  getTrends: (params) => api.get('/analytics/trends', { params }),
-  getInsights: () => api.get('/analytics/insights'),
+  getDashboard: () => api.get("/analytics/dashboard"),
+  getTrends: (params) => api.get("/analytics/trends", { params }),
+  getInsights: () => api.get("/analytics/insights"),
 };
 
 // ==============================================
-// CHATBOT APIs (FinBot)
+// CHATBOT APIs
 // ==============================================
+
 export const chatbotAPI = {
-  sendMessage: (data) => api.post('/chatbot/message', data),
-  getChatHistory: (params) => api.get('/chatbot/history', { params }),
+  sendMessage: (data) => api.post("/chatbot/message", data),
+  getChatHistory: (params) => api.get("/chatbot/history", { params }),
   toggleStar: (id) => api.put(`/chatbot/${id}/star`),
   deleteChat: (id) => api.delete(`/chatbot/${id}`),
-  clearHistory: () => api.delete('/chatbot/clear'),
+  clearHistory: () => api.delete("/chatbot/clear"),
 };
 
 // ==============================================
 // PURCHASE ADVISOR APIs
 // ==============================================
+
 export const advisorAPI = {
-  analyzePurchase: (data) => api.post('/advisor/purchase-check', data),
-  getHealthScore: () => api.get('/advisor/health-score'),
+  analyzePurchase: (data) => api.post("/advisor/purchase-check", data),
+  getHealthScore: () => api.get("/advisor/health-score"),
 };
 
 // ==============================================
-// ACADEMY APIs (Gamified Learning)
+// ACADEMY APIs
 // ==============================================
+
 export const academyAPI = {
-  getAllCourses: () => api.get('/academy/courses'),
+  getAllCourses: () => api.get("/academy/courses"),
   getCourse: (id) => api.get(`/academy/courses/${id}`),
   enrollCourse: (id) => api.post(`/academy/courses/${id}/enroll`),
-  completeChapter: (courseId, chapterNumber, data) => 
-    api.post(`/academy/courses/${courseId}/chapters/${chapterNumber}/complete`, data),
-  getProgress: () => api.get('/academy/progress'),
-  getLeaderboard: (params) => api.get('/academy/leaderboard', { params }),
+  completeChapter: (courseId, chapterNumber, data) =>
+    api.post(
+      `/academy/courses/${courseId}/chapters/${chapterNumber}/complete`,
+      data
+    ),
+  getProgress: () => api.get("/academy/progress"),
+  getLeaderboard: (params) =>
+    api.get("/academy/leaderboard", { params }),
 };
 
 // ==============================================
-// PLANNER APIs (Financial Goals)
+// PLANNER APIs
 // ==============================================
+
 export const plannerAPI = {
-  getAllGoals: (params) => api.get('/planner/goals', { params }),
+  getAllGoals: (params) => api.get("/planner/goals", { params }),
   getGoal: (id) => api.get(`/planner/goals/${id}`),
-  createGoal: (data) => api.post('/planner/goals', data),
+  createGoal: (data) => api.post("/planner/goals", data),
   updateGoal: (id, data) => api.put(`/planner/goals/${id}`, data),
   deleteGoal: (id) => api.delete(`/planner/goals/${id}`),
-  addContribution: (id, data) => api.post(`/planner/goals/${id}/contribute`, data),
-  regenerateAI: (id) => api.post(`/planner/goals/${id}/regenerate-ai`),
-  getInsights: () => api.get('/planner/insights'),
+  addContribution: (id, data) =>
+    api.post(`/planner/goals/${id}/contribute`, data),
+  regenerateAI: (id) =>
+    api.post(`/planner/goals/${id}/regenerate-ai`),
+  getInsights: () => api.get("/planner/insights"),
 };
 
 // ==============================================
-// SCHEMES APIs (Government Schemes)
+// SCHEMES APIs
 // ==============================================
+
 export const schemesAPI = {
-  getAll: () => api.get('/schemes'),
+  getAll: () => api.get("/schemes"),
 };
 
 export default api;
