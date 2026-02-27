@@ -3,7 +3,7 @@ import { X, DollarSign, Calendar, Tag, FileText, CreditCard, Sparkles, Zap, Arro
 import { expenseAPI } from '../../services/api';
 
 const AddExpenseModal = ({ isOpen, onClose, onSuccess }) => {
-  const [mode, setMode] = useState('smart'); // 'smart' or 'manual'
+  const [mode, setMode] = useState('smart');
   const [smartInput, setSmartInput] = useState('');
   const [parsedExpense, setParsedExpense] = useState(null);
   const [parsing, setParsing] = useState(false);
@@ -56,7 +56,7 @@ const AddExpenseModal = ({ isOpen, onClose, onSuccess }) => {
     let description = text;
     let type = 'expense';
 
-    // Extract amount (supports: 500, ₹500, rs500, rs 500, 500rs, etc.)
+    // Extract amount
     const amountMatch = text.match(/₹?\s*(\d+(?:,\d{3})*(?:\.\d{2})?)\s*(?:rs|rupees|inr)?|(?:rs|rupees|inr)?\s*(\d+(?:,\d{3})*(?:\.\d{2})?)/i);
     if (amountMatch) {
       amount = parseFloat((amountMatch[1] || amountMatch[2]).replace(/,/g, ''));
@@ -68,7 +68,7 @@ const AddExpenseModal = ({ isOpen, onClose, onSuccess }) => {
       type = 'income';
     }
 
-    // Category detection based on keywords
+    // Category detection
     const categoryKeywords = {
       'Food & Dining': ['food', 'lunch', 'dinner', 'breakfast', 'restaurant', 'zomato', 'swiggy', 'cafe', 'coffee', 'tea', 'snacks', 'groceries', 'vegetables', 'fruits', 'khana', 'biryani', 'pizza', 'burger', 'chai', 'samosa'],
       'Transportation': ['uber', 'ola', 'cab', 'taxi', 'auto', 'rickshaw', 'metro', 'bus', 'train', 'petrol', 'diesel', 'fuel', 'parking', 'toll', 'travel'],
@@ -102,7 +102,7 @@ const AddExpenseModal = ({ isOpen, onClose, onSuccess }) => {
 
     // Clean description
     description = text.replace(/₹?\s*\d+(?:,\d{3})*(?:\.\d{2})?\s*(?:rs|rupees|inr)?/gi, '').trim();
-    if (!description) description = `${category} expense`;
+    if (!description) description = type === 'income' ? `${category} income` : `${category} expense`;
 
     return { amount, category, description, type };
   };
@@ -112,7 +112,6 @@ const AddExpenseModal = ({ isOpen, onClose, onSuccess }) => {
     
     setParsing(true);
     
-    // Simulate AI processing delay
     setTimeout(() => {
       const parsed = parseNaturalLanguage(smartInput);
       setParsedExpense(parsed);
@@ -148,7 +147,7 @@ const AddExpenseModal = ({ isOpen, onClose, onSuccess }) => {
         resetForm();
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to add expense');
+      setError(err.response?.data?.message || 'Failed to add transaction');
     } finally {
       setLoading(false);
     }
@@ -232,7 +231,7 @@ const AddExpenseModal = ({ isOpen, onClose, onSuccess }) => {
                 <div>
                   <h3 className="font-semibold text-gray-900">AI-Powered Entry</h3>
                   <p className="text-sm text-gray-600 mt-1">
-                    Just describe your expense naturally. Examples:
+                    Just describe your transaction naturally. Examples:
                   </p>
                   <ul className="text-sm text-gray-500 mt-2 space-y-1">
                     <li>• "Spent 500 on lunch at Zomato"</li>
@@ -431,7 +430,7 @@ const AddExpenseModal = ({ isOpen, onClose, onSuccess }) => {
               </div>
             </div>
 
-            {/* Description */}
+            {/* Description - ✅ FIXED: Dynamic placeholder based on type */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Description <span className="text-red-500">*</span>
@@ -439,18 +438,18 @@ const AddExpenseModal = ({ isOpen, onClose, onSuccess }) => {
               <div className="relative">
                 <FileText className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
                 <textarea
-  name="description"
-  value={formData.description}
-  onChange={handleChange}
-  placeholder={
-    formData.type === 'expense'
-      ? 'What did you spend on?'
-      : 'Source of income'
-  }
-  rows="2"
-  className="input-field pl-10 resize-none"
-  required
-/>
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  placeholder={
+                    formData.type === 'expense'
+                      ? 'What did you spend on?'
+                      : 'Source of income (e.g., Salary, Freelance, Business)'
+                  }
+                  rows="2"
+                  className="input-field pl-10 resize-none"
+                  required
+                />
               </div>
             </div>
 
@@ -508,7 +507,7 @@ const AddExpenseModal = ({ isOpen, onClose, onSuccess }) => {
                 disabled={loading}
                 className="btn-primary flex-1"
               >
-                {loading ? 'Adding...' : 'Add Transaction'}
+                {loading ? 'Adding...' : `Add ${formData.type === 'income' ? 'Income' : 'Expense'}`}
               </button>
             </div>
           </form>
