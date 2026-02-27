@@ -439,14 +439,18 @@ const AddExpenseModal = ({ isOpen, onClose, onSuccess }) => {
               <div className="relative">
                 <FileText className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
                 <textarea
-                  name="description"
-                  value={formData.description}
-                  onChange={handleChange}
-                  placeholder="What did you spend on?"
-                  rows="2"
-                  className="input-field pl-10 resize-none"
-                  required
-                />
+  name="description"
+  value={formData.description}
+  onChange={handleChange}
+  placeholder={
+    formData.type === 'expense'
+      ? 'What did you spend on?'
+      : 'Source of income'
+  }
+  rows="2"
+  className="input-field pl-10 resize-none"
+  required
+/>
               </div>
             </div>
 
