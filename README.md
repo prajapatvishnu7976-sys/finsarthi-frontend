@@ -1,16 +1,40 @@
-# React + Vite
+# 💰 FinSarthi – AI Finance Web App 🚀
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+FinSarthi is an AI-powered finance platform designed to help users manage expenses, analyze financial data, and make smarter financial decisions.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## ✨ Features
 
-## React Compiler
+* 📊 Expense tracking system
+* 🤖 AI-based financial insights
+* 📈 Data visualization
+* 💡 Smart financial suggestions
+* ⚡ Clean and responsive UI
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 🛠️ Tech Stack
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+* **Frontend:** HTML, CSS, JavaScript
+* **Backend:** Node.js
+* **Database:** (Add if used)
+
+---
+
+## 🚀 Project Highlights
+
+* 💡 Focused on real-world financial problems
+* 📊 User-friendly dashboard
+* ⚡ Fast and responsive design
+
+---
+
+## 📫 Connect With Me
+
+* 💼 LinkedIn: https://www.linkedin.com/in/vishnu-kumar-545037327/
+* 🌐 Portfolio: https://prajapatvishnu7976-sys.github.io/My-portfolio/
+
+---
+
+⭐ **"Build smart solutions for real-world problems."**
